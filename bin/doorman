@@ -273,7 +273,7 @@ class Doorman
     }
     puts
 
-    system "bash"  #should use $SHELL here?
+    exec "bash"  #should use $SHELL here?
     #should call CMD.EXE on windows....
   end
 end
