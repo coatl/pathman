@@ -83,11 +83,13 @@ class Doorman
   end
 
   def subdirs d
-    @include.map{|dir| d+'/'+dir} + 
+    result=@include.map{|dir| d+'/'+dir} + 
       Dir[d+"/*"].select{|dir| 
         File.directory?( dir ) and 
           !@exclude.include?( File.basename( dir ) )
-      }.uniq
+      }
+    result.uniq!
+    result
   end
 
   def doorman_home d
