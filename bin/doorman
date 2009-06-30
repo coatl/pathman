@@ -39,7 +39,9 @@ class Doorman
     nil #for now
   end
 
-  def readconfig prefix=''
+  def readconfig 
+    dir=find_doorman_dir
+    prefix=''
     prefix+='.'
     prefix='' if prefix=='.'
     lines=File.readlines('doorman.dm') rescue []
