@@ -35,7 +35,7 @@ class Doorman
   end
 
   def othervars name
-    return Dir.pwd if name=="pwd"
+    return find_doorman_dir if name=="pwd"
     nil #for now
   end
 
@@ -44,10 +44,10 @@ class Doorman
     prefix=''
     prefix+='.'
     prefix='' if prefix=='.'
-    lines=File.readlines('doorman.dm') rescue []
+    lines=File.readlines(dir+'/doorman.dm') rescue []
     lines.reject!{|line| /^\s*(\#.*)?$/===line} #rm comments and blanks
     kv=lines.map!{|line| line.split('=',2) }
-    kv.map!{|(k,v)| 
+    kv.map!{|(k,v)| #every k needs prefix prepended unless has one already
       k=prefix+k unless k['.']
       [k,v]
     }
@@ -61,7 +61,7 @@ class Doorman
     @exclude=@config['exclude'].split(' ') rescue []
 
     #todo for config file:
-    #doorman.dm in subdirs
+    #doorman.dm in subdirs?
     #configuration points:
     #  global: envvars
     #  per project: test/make/clean cmd, ./configure options
@@ -234,18 +234,29 @@ class Doorman
     return @setup_env=changes
   end
 
-  def invoke d  #no args; set env vars and shell out
-    warn "still some duplication in generated path envvars"
-    changes=setup_env d
+  def find_doorman_dir dir=Dir.pwd
+    #search up the dir tree for dir that contains doorman.dm
+    dir=File.dirname dir until File.exist?(dir+"/doorman.dm")
+    dir
+  end
+
+  def invoke ignored  #no args; set env vars and shell out
+    dir=origdir=Dir.pwd
+    dir=find_doorman_dir dir
+
+    #now cd to it  
+    Dir.chdir dir
+      changes=setup_env dir
+    Dir.chdir origdir
   
     #print out what was changed
     puts
-    puts "DMHOME=#{Dir.pwd}"
+    puts "DMHOME=#{dir}"
     changes.each_pair{|env,val| 
       val=val.chomp File::PATH_SEPARATOR #rm trailing sep left by setup_env
 
       #compress out instances of $DMHOME
-      val.gsub!(/(\A|#{File::PATH_SEPARATOR})(#{Dir.pwd})/,'\\1$DMHOME')
+      val.gsub!(/(\A|#{File::PATH_SEPARATOR})(#{dir})/,'\\1$DMHOME')
 
       #keep line from being longer than ~50 chars
       #1 while val.gsub!(/^([^\n]{60,}:)((?!\\\n).*)$/,"\\1\\\\\n\\2")
