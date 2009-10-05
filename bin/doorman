@@ -75,12 +75,12 @@ class Pathman
   end
 
   def othervars name
-    return find_doorman_dir if name=="pwd"
+    return find_pathman_dir if name=="pwd"
     nil #for now
   end
 
   def readconfig 
-    dir=find_doorman_dir
+    dir=find_pathman_dir
     prefix=''
     prefix+='.'
     prefix='' if prefix=='.'
@@ -270,21 +270,21 @@ class Pathman
       }
     }
 
-    fail "doorman reinvoked in a doorman session!" if ENV['DMHOME'] and ENV['DMHOME']!=''
-    ENV['DMHOME']=Dir.pwd
+    fail "pathman reinvoked in a pathman session!" if ENV['PMHOME'] and ENV['PMHOME']!=''
+    ENV['PMHOME']=Dir.pwd
  
     return @setup_env=changes
   end
 
-  def find_doorman_dir dir=Dir.pwd
-    #search up the dir tree for dir that contains doorman.dm
-    dir=File.dirname dir until File.exist?(dir+"/doorman.dm")
+  def find_pathman_dir dir=Dir.pwd
+    #search up the dir tree for dir that contains pathman.pm
+    dir=File.dirname dir until File.exist?(dir+"/pathman.pm")
     dir
   end
 
   def invoke ignored  #no args; set env vars and shell out
     dir=origdir=Dir.pwd
-    dir=find_doorman_dir dir
+    dir=find_pathman_dir dir
 
     #now cd to it  
     Dir.chdir dir
