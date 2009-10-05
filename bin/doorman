@@ -84,7 +84,7 @@ class Pathman
     prefix=''
     prefix+='.'
     prefix='' if prefix=='.'
-    lines=File.readlines(dir+'/doorman.dm') rescue []
+    lines=File.readlines(dir+'/pathman.pm') rescue []
     lines.reject!{|line| /^\s*(\#.*)?$/===line} #rm comments and blanks
     kv=lines.map!{|line| line.split('=',2) }
     kv.map!{|(k,v)| #every k needs prefix prepended unless has one already
@@ -101,7 +101,7 @@ class Pathman
     @exclude=@config['exclude'].split(' ') rescue []
 
     #todo for config file:
-    #doorman.dm in subdirs?
+    #pathman.pm in subdirs?
     #configuration points:
     #  global: envvars
     #  per project: test/make/clean cmd, ./configure options
@@ -229,7 +229,7 @@ class Pathman
   end
   
 
-  #generate a doorman.dm file with default settings for the user to edit
+  #generate a pathman.pm file with default settings for the user to edit
   def generate d
     if insubdir d
       Dir.chdir d
