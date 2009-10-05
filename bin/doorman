@@ -132,8 +132,8 @@ class Pathman
     result
   end
 
-  def doorman_home d
-    ENV['DMHOME'] or File.dirname d 
+  def pathman_home d
+    ENV['PMHOME'] or File.dirname d 
   end
 
   def make d
@@ -141,7 +141,7 @@ class Pathman
       subdirs(d).each{|subdir| make subdir }
       #what about build order? has to be configured
     else
-      setup_env( doorman_home( d ) )
+      setup_env( pathman_home( d ) )
       Dir.chdir d
 
       huh #shouldn't do anything if make of this dir happened already on this run
@@ -180,7 +180,7 @@ class Pathman
     unless insubdir d
       subdirs(d).each{|subdir| clean subdir }
     else
-      setup_env( doorman_home( d ) )
+      setup_env( pathman_home( d ) )
       Dir.chdir d
 
       huh
@@ -293,12 +293,12 @@ class Pathman
   
     #print out what was changed
     puts
-    puts "DMHOME=#{dir}"
+    puts "PMHOME=#{dir}"
     changes.each_pair{|env,val| 
       val=val.chomp File::PATH_SEPARATOR #rm trailing sep left by setup_env
 
-      #compress out instances of $DMHOME
-      val.gsub!(/(\A|#{File::PATH_SEPARATOR})(#{dir})/,'\\1$DMHOME')
+      #compress out instances of $PMHOME
+      val.gsub!(/(\A|#{File::PATH_SEPARATOR})(#{dir})/,'\\1$PMHOME')
 
       #keep line from being longer than ~50 chars
       #1 while val.gsub!(/^([^\n]{60,}:)((?!\\\n).*)$/,"\\1\\\\\n\\2")
@@ -323,7 +323,7 @@ end
 Pathman.new.main ARGV[0] if __FILE__==$0
 
 #todo:
-#v detect re-doorman while already in a doorman env
-#v DMHOME env var?
+#v detect re-pathman while already in a pathman env
+#v PMHOME env var?
 #need a -n option, like make
 #--verbose/--quiet ??
