@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+#Copyright (c) 2009 Caleb Clausen
 
 =begin
 pathman is a tool for creating development environments from collections of 
