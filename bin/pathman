@@ -254,6 +254,7 @@ class Pathman
       SCAN_SUBDIRS.each_pair{|sdir,envs|
         scanning= @config[File.basename(subdir)+'.'+sdir] ||
                   subdir+"/"+sdir
+        scanning=File.join(subdir,scanning) if !File.exist? scanning
         if ( File.directory?( scanning ) rescue nil)
           Array(envs).each{|env|
             old=ENV[env]
